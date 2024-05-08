@@ -22,7 +22,9 @@ const MovieList = ({ movies }: Props) => {
                   Release Date:{' '}
                   {new Date(movie.release_date).toLocaleDateString()}
                 </p>
-                <p className='card-text'>Rating:</p>
+                <p className='card-text'>
+                  Rating: {movie.vote_average.toFixed(2)}
+                </p>
                 {/* <p className='card-title'>{movie.title}</p> */}
               </div>
             </div>

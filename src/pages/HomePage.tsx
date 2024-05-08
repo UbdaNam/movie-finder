@@ -9,26 +9,31 @@ export interface Movie {
   title: string;
   release_date: string;
   poster_path: string;
-  rating: number;
+  vote_average: number;
 }
 
 const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [movies, setMovies] = useState<Movie[]>([]);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
     const fetchMovies = async () => {
       try {
+        setLoading(true);
         const { data } = await apiClient.get(
           `/search/movie?query=${searchTerm}`,
           { signal: controller.signal }
         );
         setMovies(data.results);
+        setError('');
       } catch (err) {
         if (err instanceof CanceledError) return;
         setError('Error fetching movies. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -46,7 +51,14 @@ const HomePage = () => {
       <div className='mb-3'>
         <SearchMovie onSearch={(searchTerm) => setSearchTerm(searchTerm)} />
       </div>
-      <MovieList movies={movies} />
+      <div>
+        {loading && (
+          <div className='spinner-border text-primary' role='status'>
+            <span className='visually-hidden'>Loading...</span>
+          </div>
+        )}
+        {!loading && <MovieList movies={movies} />}
+      </div>
     </>
   );
 };
